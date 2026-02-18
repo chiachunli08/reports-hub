@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>2308 台達電 深度調研</title>
+<style>
+    :root {
+        --primary: #0056b3;
+        --secondary: #2c3e50;
+        --accent: #34495e;
+        --bg: #f8f9fa;
+        --card: #fff;
+        --text: #333;
+        --border: #e0e0e0;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 16px;
+        padding-bottom: 70px;
+    }
+    
+    /* Header */
+    .header {
+        background: linear-gradient(135deg, var(--primary) 0%, #003d7a 100%);
+        color: white;
+        padding: 20px 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+        font-size: 1.4em;
+        margin-bottom: 4px;
+    }
+    
+    .header .subtitle {
+        font-size: 0.85em;
+        opacity: 0.9;
+    }
+    
+    /* Navigation */
+    .nav {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        padding: 0 16px;
+        position: sticky;
+        top: 64px;
+        z-index: 99;
+    }
+    
+    .nav::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .nav a {
+        display: inline-block;
+        padding: 12px 16px;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9em;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+    }
+    
+    .nav a.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+        font-weight: 600;
+    }
+    
+    /* Content */
+    .content {
+        padding: 16px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    /* Cards */
+    .phase-card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    .phase-card h2 {
+        color: var(--primary);
+        font-size: 1.2em;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary);
+    }
+    
+    .phase-card h3 {
+        color: var(--secondary);
+        font-size: 1.05em;
+        margin: 16px 0 10px 0;
+    }
+    
+    /* Key Metrics */
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 16px 0;
+    }
+    
+    .metric {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    .metric .value {
+        font-size: 1.3em;
+        font-weight: 700;
+        color: var(--primary);
+    }
+    
+    .metric .label {
+        font-size: 0.75em;
+        color: var(--accent);
+        margin-top: 4px;
+    }
+    
+    /* Lists */
+    .phase-card ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    
+    .phase-card li {
+        margin: 8px 0;
+        font-size: 0.95em;
+    }
+    
+    .phase-card strong {
+        color: var(--primary);
+    }
+    
+    /* Tables */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 16px -20px;
+        padding: 0 20px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85em;
+        min-width: 500px;
+    }
+    
+    th {
+        background: var(--primary);
+        color: white;
+        padding: 10px 8px;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    tr:nth-child(even) td {
+        background: #f8f9fa;
+    }
+    
+    /* Highlight Box */
+    .highlight {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+        border-left: 4px solid #ffc107;
+        padding: 16px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+    }
+    
+    .highlight.green {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-left-color: #28a745;
+    }
+    
+    .highlight.red {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-left-color: #dc3545;
+    }
+    
+    /* Verdict */
+    .verdict {
+        background: linear-gradient(135deg, var(--primary) 0%, #003d7a 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 24px 20px;
+        text-align: center;
+        margin-top: 16px;
+    }
+    
+    .verdict h3 {
+        color: white;
+        font-size: 1.3em;
+        margin-bottom: 12px;
+    }
+    
+    .verdict .rating {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+    
+    /* Back to Top */
+    .back-top {
+        position: fixed;
+        bottom: 80px;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        cursor: pointer;
+        z-index: 100;
+        display: none;
+    }
+    
+    .back-top.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-around;
+        padding: 8px 0;
+        z-index: 100;
+    }
+    
+    .bottom-nav button {
+        background: none;
+        border: none;
+        padding: 8px 16px;
+        color: var(--accent);
+        font-size: 0.85em;
+        cursor: pointer;
+    }
+    
+    .bottom-nav button.active {
+        color: var(--primary);
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>2308 台達電</h1>
+    <div class="subtitle">深度投資調研報告 (2026-02-17)</div>
+</div>
+
+<div class="nav">
+    <a href="#phase1" class="active">Phase 1</a>
+    <a href="#phase2">Phase 2</a>
+    <a href="#phase3">Phase 3</a>
+    <a href="#phase4">Phase 4</a>
+    <a href="#phase5">Phase 5</a>
+    <a href="#phase6">Phase 6</a>
+    <a href="#phase7">Phase 7</a>
+    <a href="#phase8">結論</a>
+</div>
+
+<div class="content">
+
+<!-- Key Metrics Summary -->
+<div class="phase-card">
+    <h2>📊 核心數據</h2>
+    <div class="metrics">
+        <div class="metric">
+            <div class="value">34%</div>
+            <div class="label">毛利率</div>
+        </div>
+        <div class="metric">
+            <div class="value">22-25</div>
+            <div class="label">2025 EPS</div>
+        </div>
+        <div class="metric">
+            <div class="value">1,200</div>
+            <div class="label">目標價</div>
+        </div>
+        <div class="metric">
+            <div class="value">40-50x</div>
+            <div class="label">合理 PE</div>
+        </div>
+    </div>
+    <div class="highlight green">
+        <strong>💎 核心結論：</strong>台達電已從傳統工業股轉型為 AI 基礎設施王者。靠著獨佔的 5.5kW 電源和液冷散熱，毛利率突破 34%。
+    </div>
+</div>
+
+<!-- Phase 1 -->
+<div class="phase-card" id="phase1">
+    <h2>Phase 1: 公司事實底座</h2>
+    
+    <h3>基本資料</h3>
+    <ul>
+        <li><strong>股票代號：</strong>2308 (TWSE)</li>
+        <li><strong>市值：</strong>約 2.7 兆台幣</li>
+        <li><strong>主要業務：</strong>電源管理與散熱解決方案</li>
+    </ul>
+    
+    <h3>營收結構 (2025)</h3>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>事業群</th>
+                <th>佔比</th>
+                <th>關鍵驅動</th>
+            </tr>
+            <tr>
+                <td>電源及零組件</td>
+                <td>~46%</td>
+                <td>AI 伺服器電源 (5.5kW PSU)</td>
+            </tr>
+            <tr>
+                <td>基礎設施</td>
+                <td>~42%</td>
+                <td>液冷散熱、儲能系統</td>
+            </tr>
+            <tr>
+                <td>自動化</td>
+                <td>~7%</td>
+                <td>工業自動化</td>
+            </tr>
+            <tr>
+                <td>電動車</td>
+                <td>~5%</td>
+                <td>車載充電器、驅動系統</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="highlight">
+        <strong>🔥 2025 亮點：</strong>AI 伺服器電源與液冷散熱合計佔比接近 <strong>30%</strong>，成為最大單一成長引擎。股價突破 1,000 元大關。
+    </div>
+</div>
+
+<!-- Phase 2 -->
+<div class="phase-card" id="phase2">
+    <h2>Phase 2: 產業週期分析</h2>
+    
+    <h3>AI 電源與散熱：超級循環</h3>
+    <ul>
+        <li><strong>功率革命：</strong>單機櫃從 10-20kW 躍升至 100-300kW</li>
+        <li><strong>液冷元年：</strong>2025 Q1 全球液冷營收翻倍，2028 年 CAGR 達 40%</li>
+        <li><strong>台達電地位：</strong>全球伺服器電源市佔率 >50%，AI 高階領域技術領先</li>
+    </ul>
+    
+    <h3>競爭對手</h3>
+    <ul>
+        <li><strong>Vertiv (VRT)：</strong>美系強敵，專注熱管理</li>
+        <li><strong>光寶科 (2301)：</strong>緊追在後，但液冷整合度較低</li>
+    </ul>
+    
+    <div class="highlight red">
+        <strong>⚠️ EV 逆風：</strong>電動車市場價格戰導致需求放緩，對供應鏈降價壓力倍增。
+    </div>
+</div>
+
+<!-- Phase 3 -->
+<div class="phase-card" id="phase3">
+    <h2>Phase 3: 業務拆解</h2>
+    
+    <h3>AI 電源與液冷 (核心引擎)</h3>
+    <ul>
+        <li><strong>主力產品：</strong>5.5kW PSU (NVIDIA GB200 標配)</li>
+        <li><strong>下一代：</strong>8kW、10kW、12kW 已準備就緒</li>
+        <li><strong>液冷營收：</strong>2025 年 468-500 億 → 2026 年 850 億</li>
+    </ul>
+    
+    <div class="highlight green">
+        <strong>🏆 護城河：</strong>提供「電源 + 散熱」整合方案，解決客戶「散熱焦慮」，對手難以複製。
+    </div>
+</div>
+
+<!-- Phase 4 -->
+<div class="phase-card" id="phase4">
+    <h2>Phase 4: 財務質量</h2>
+    
+    <h3>獲利能力</h3>
+    <div class="metrics">
+        <div class="metric">
+            <div class="value">34%+</div>
+            <div class="label">毛利率</div>
+        </div>
+        <div class="metric">
+            <div class="value">12-13%</div>
+            <div class="label">營業利益率</div>
+        </div>
+    </div>
+    
+    <h3>EPS 成長動能</h3>
+    <ul>
+        <li><strong>2025 Q2：</strong>5.37 元 (季增 36%)</li>
+        <li><strong>2025 Q3：</strong>7.16 元 (年增 51%)</li>
+        <li><strong>全年預估：</strong>22-25 元 (vs 2024 年 13.56 元)</li>
+    </ul>
+    
+    <div class="highlight">
+        <strong>📈 質變：</strong>從「定存股 (賺10元)」變身「成長股 (賺20元+)」
+    </div>
+</div>
+
+<!-- Phase 5 -->
+<div class="phase-card" id="phase5">
+    <h2>Phase 5: 籌碼與治理</h2>
+    
+    <ul>
+        <li><strong>外資持股：</strong>65-70% (高檔穩定)</li>
+        <li><strong>法人控盤：</strong>融資餘額低，籌碼安定</li>
+        <li><strong>ESG 模範：</strong>長期入選 DJSI 世界指數</li>
+    </ul>
+    
+    <div class="highlight green">
+        <strong>✅ 綠色護城河：</strong>RE100 認證，爭取 Apple、Google 等客戶具優勢。
+    </div>
+</div>
+
+<!-- Phase 6 -->
+<div class="phase-card" id="phase6">
+    <h2>Phase 6: 市場分歧</h2>
+    
+    <h3>2025 Q3 財報震撼</h3>
+    <ul>
+        <li>單季 EPS 7.16 元 (優於預期 17%)</li>
+        <li>前三季 EPS 16.47 元，超越 2024 全年</li>
+    </ul>
+    
+    <h3>外資目標價</h3>
+    <ul>
+        <li><strong>全面上調至：</strong>1,235 - 1,400 元</li>
+        <li><strong>評等：</strong>維持「買進」或「優於大盤」</li>
+    </ul>
+    
+    <div class="highlight">
+        <strong>💭 散戶情緒：</strong>「千元還能追嗎？」vs「後悔在 400/500 就賣飛了」
+    </div>
+</div>
+
+<!-- Phase 7 -->
+<div class="phase-card" id="phase7">
+    <h2>Phase 7: 估值與護城河</h2>
+    
+    <h3>本益比重估 (PE Re-rating)</h3>
+    <ul>
+        <li><strong>歷史區間：</strong>20-30 倍</li>
+        <li><strong>AI 新常態：</strong>40-55 倍 (比照 Vertiv PE>60x)</li>
+    </ul>
+    
+    <h3>目標價情境</h3>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>情境</th>
+                <th>PE</th>
+                <th>目標價</th>
+            </tr>
+            <tr>
+                <td>樂觀</td>
+                <td>55x</td>
+                <td>1,350 元</td>
+            </tr>
+            <tr>
+                <td>基本</td>
+                <td>45x</td>
+                <td>1,100 元</td>
+            </tr>
+            <tr>
+                <td>保守</td>
+                <td>35x</td>
+                <td>860 元</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>技術護城河</h3>
+    <ul>
+        <li><strong>功率密度：</strong>領先同業 6-12 個月</li>
+        <li><strong>熱管理整合：</strong>「電源 + 液冷」綑綁銷售，門檻極高</li>
+    </ul>
+</div>
+
+<!-- Phase 8: Conclusion -->
+<div class="phase-card" id="phase8">
+    <h2>Phase 8: 綜合結論</h2>
+    
+    <h3>投資論點</h3>
+    <ul>
+        <li><strong>轉型成功：</strong>從穩健工業股 → AI 基礎設施王者</li>
+        <li><strong>成長引擎：</strong>AI 電源 + 液冷年增 50%+</li>
+        <li><strong>獲利質變：</strong>EPS 從 13.56 元跳升至 22-25 元</li>
+    </ul>
+    
+    <h3>風險提示</h3>
+    <ul>
+        <li>EV 市場持續低迷 (佔比已降至 5%)</li>
+        <li>估值修正風險 (PE 處於歷史高位)</li>
+        <li>地緣政治與供應鏈移轉</li>
+    </ul>
+    
+    <h3>策略建議</h3>
+    <ul>
+        <li><strong>短期：</strong>拉回佈局 (Buy on Dips)，切勿追高</li>
+        <li><strong>長期：</strong>目標價 1,200 元 (2026 EPS 30 元 x 40 倍 PE)</li>
+    </ul>
+    
+    <div class="verdict">
+        <h3>最終評價</h3>
+        <p style="margin-bottom: 12px; opacity: 0.9;">台達電是 AI 時代的「賣鏟子的人」</p>
+        <div class="rating">🟢 Strong Buy - 耐心等待買點</div>
+    </div>
+</div>
+
+</div>
+
+<button class="back-top" onclick="scrollToTop()">↑</button>
+
+<div class="bottom-nav">
+    <button onclick="scrollToTop()">頂部</button>
+    <button onclick="location.href='https://github.com/chiachunli08/super-digital-power/raw/main/reports/2308_Delta_Report.pdf'">PDF</button>
+</div>
+
+<script>
+// Back to top button
+window.addEventListener('scroll', function() {
+    const btn = document.querySelector('.back-top');
+    if (window.scrollY > 300) {
+        btn.classList.add('show');
+    } else {
+        btn.classList.remove('show');
+    }
+});
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Active nav link
+const sections = document.querySelectorAll('.phase-card');
+const navLinks = document.querySelectorAll('.nav a');
+
+window.addEventListener('scroll', function() {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= sectionTop - 100) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Smooth scroll for nav links
+navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+</script>
+
+</body>
+</html>
